@@ -1,15 +1,15 @@
 package com.bsuir.lagunovskaya.clinic.client.ui;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
+import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DepartmentDialog;
 import com.bsuir.lagunovskaya.clinic.communication.AllClinicDepartmentsServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ClinicDepartmentServerResponse;
-import com.bsuir.lagunovskaya.clinic.communication.ServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.UserServerResponse;
+import com.bsuir.lagunovskaya.clinic.communication.entity.Clinic;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;
-import com.bsuir.lagunovskaya.clinic.communication.entity.User;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -41,8 +41,6 @@ public class DoctorFrame extends JFrame {
     private JScrollPane scrolledPatientsList;
 
 
-
-
     public DoctorFrame(final LoginFrame loginFrame, Doctor doctor) throws HeadlessException {
         this.loginFrame = loginFrame;
         this.activeDoctor = doctor;
@@ -58,7 +56,11 @@ public class DoctorFrame extends JFrame {
         JPanel centerPanel = buildCenterPanel();
         add(centerPanel, BorderLayout.CENTER);
 
-        loadClinicDepartmentsOnStart();
+        JPanel eastPanel = buildEastPanel();
+        add(eastPanel, BorderLayout.EAST);
+
+
+        loadClinicDepartments();
         setVisible(true);
     }
 
@@ -145,14 +147,15 @@ public class DoctorFrame extends JFrame {
                         = (ClinicDepartmentServerResponse) ClientCommandSender.sendClientCommand(getClinicDepartmentByNameCommand);
                 ClinicDepartment clinicDepartment = clinicDepartmentServerResponse.getClinicDepartment();
                 doctorsListModel.clear();
-                for (Doctor departmentDoctor : clinicDepartment.getDoctors()) {
-                    doctorsListModel.addElement(departmentDoctor.getLogin());
-                }
                 patientsListModel.clear();
-                for (Patient departmentPatient : clinicDepartment.getPatients()) {
-                    patientsListModel.addElement(departmentPatient.getLogin());
+                if (clinicDepartment != null) {
+                    for (Doctor departmentDoctor : clinicDepartment.getDoctors()) {
+                        doctorsListModel.addElement(departmentDoctor.getLogin());
+                    }
+                    for (Patient departmentPatient : clinicDepartment.getPatients()) {
+                        patientsListModel.addElement(departmentPatient.getLogin());
+                    }
                 }
-
             }
         });
 
@@ -166,12 +169,7 @@ public class DoctorFrame extends JFrame {
                     ClinicDepartmentServerResponse clinicDepartmentServerResponse
                             = (ClinicDepartmentServerResponse) ClientCommandSender.sendClientCommand(getClinicDepartmentByNameCommand);
                     ClinicDepartment clinicDepartment = clinicDepartmentServerResponse.getClinicDepartment();
-                    if (clinicDepartment != null) {
-                        String departmentInfo = "Название отделения: " + clinicDepartment.getName() +
-                                ", входящие улицы: " + clinicDepartment.getStreets();
-                        JOptionPane.showMessageDialog(DoctorFrame.this, departmentInfo,
-                                "Информация об отделении", JOptionPane.INFORMATION_MESSAGE);
-                    }
+                    new DepartmentDialog(DoctorFrame.this, clinicDepartment.getClinic(), clinicDepartment);
                 }
             }
         });
@@ -187,7 +185,7 @@ public class DoctorFrame extends JFrame {
         return northPanel;
     }
 
-    private void loadClinicDepartmentsOnStart() {
+    public void loadClinicDepartments() {
         ClientCommand getAllClinicDepartmentsClientCommand = new ClientCommand("getAllClinicDepartments");
         AllClinicDepartmentsServerResponse allClinicDepartmentsServerResponse =
                 (AllClinicDepartmentsServerResponse) ClientCommandSender.sendClientCommand(getAllClinicDepartmentsClientCommand);
@@ -206,6 +204,22 @@ public class DoctorFrame extends JFrame {
                 DoctorFrame.this.loginFrame.activateLoginFrame();
             }
         });
+    }
+
+    private JPanel buildEastPanel() {
+        JPanel eastPanel = new JPanel(new GridLayout(5, 1));
+        JPanel tempRowPanel = new JPanel(new FlowLayout());
+        JButton createDepartment = new JButton("Создать отделение");
+        tempRowPanel.add(createDepartment);
+        createDepartment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new DepartmentDialog(DoctorFrame.this, activeDoctor.getClinicDepartment().getClinic(), null);
+            }
+        });
+        eastPanel.add(tempRowPanel);
+
+        return eastPanel;
     }
 
 }

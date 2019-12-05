@@ -33,7 +33,7 @@ public class ClientCommandSender {
                 serverResponse = (ServerResponse) in.readObject(); // ждём, что скажет сервер
                 System.out.println(serverResponse); // получив - выводим на экран
             } finally { // в любом случае необходимо закрыть сокет и потоки
-                System.out.println("Клиент был закрыт...");
+                System.out.println("Запрос обработан...");
                 try {
                     clientSocket.close();
                     in.close();
