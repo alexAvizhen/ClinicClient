@@ -1,9 +1,11 @@
 package com.bsuir.lagunovskaya.clinic.client.ui;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
+import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.AppointmentDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DepartmentDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DoctorDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.PatientDialog;
+import com.bsuir.lagunovskaya.clinic.client.utils.StringUtils;
 import com.bsuir.lagunovskaya.clinic.communication.AllClinicDepartmentsServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ClinicDepartmentServerResponse;
@@ -42,6 +44,9 @@ public class DoctorFrame extends JFrame {
     private DefaultListModel<String> patientsListModel;
     private JList<String> patientsList;
     private JScrollPane scrolledPatientsList;
+
+    private JTextField doctorLoginForAppointmentField = new JTextField(20);
+    private JTextField patientLoginForAppointmentField = new JTextField(20);
 
 
     public DoctorFrame(final LoginFrame loginFrame, Doctor doctor) throws HeadlessException {
@@ -101,6 +106,15 @@ public class DoctorFrame extends JFrame {
     }
 
     private void addPatientsListListeners() {
+        patientsList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                String selectedValue = patientsList.getSelectedValue();
+                if (selectedValue != null && !selectedValue.isEmpty()) {
+                    patientLoginForAppointmentField.setText(patientsList.getSelectedValue());
+                }
+            }
+        });
         patientsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -117,6 +131,15 @@ public class DoctorFrame extends JFrame {
     }
 
     private void addDoctorListListeners() {
+        doctorsList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                String selectedValue = doctorsList.getSelectedValue();
+                if (selectedValue != null && !selectedValue.isEmpty()) {
+                    doctorLoginForAppointmentField.setText(doctorsList.getSelectedValue());
+                }
+            }
+        });
         doctorsList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -204,7 +227,7 @@ public class DoctorFrame extends JFrame {
     }
 
     private JPanel buildEastPanel() {
-        JPanel eastPanel = new JPanel(new GridLayout(5, 1));
+        JPanel eastPanel = new JPanel(new GridLayout(4, 1));
         JPanel tempRowPanel = new JPanel(new FlowLayout());
         JButton createDepartment = new JButton("Создать отделение");
         tempRowPanel.add(createDepartment);
@@ -237,6 +260,38 @@ public class DoctorFrame extends JFrame {
             }
         });
         eastPanel.add(tempRowPanel);
+
+        JPanel appointmentPanel = new JPanel(new GridLayout(3, 1));
+        tempRowPanel = new JPanel(new FlowLayout());
+        tempRowPanel.add(new JLabel("Врач для приёма"));
+        doctorLoginForAppointmentField.setEditable(false);
+        tempRowPanel.add(doctorLoginForAppointmentField);
+        appointmentPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        tempRowPanel.add(new JLabel("Пациент для приёма"));
+        patientLoginForAppointmentField.setEditable(false);
+        tempRowPanel.add(patientLoginForAppointmentField);
+        appointmentPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        JButton makeAndAppointmentBtn = new JButton("Назначить приём");
+        tempRowPanel.add(makeAndAppointmentBtn);
+        appointmentPanel.add(tempRowPanel);
+        makeAndAppointmentBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String doctorLogin = doctorLoginForAppointmentField.getText();
+                String patientLogin = patientLoginForAppointmentField.getText();
+                if (StringUtils.isEmpty(doctorLogin) || StringUtils.isEmpty(patientLogin)) {
+                    JOptionPane.showMessageDialog(DoctorFrame.this,
+                            "Выберите доктора и пациента, чтобы назначить приём");
+                } else {
+                    new AppointmentDialog(DoctorFrame.this, doctorLogin, patientLogin);
+                }
+            }
+        });
+        eastPanel.add(appointmentPanel);
 
         return eastPanel;
     }
