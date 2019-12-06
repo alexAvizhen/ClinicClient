@@ -2,11 +2,11 @@ package com.bsuir.lagunovskaya.clinic.client.ui;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DepartmentDialog;
+import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DoctorDialog;
 import com.bsuir.lagunovskaya.clinic.communication.AllClinicDepartmentsServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ClinicDepartmentServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.UserServerResponse;
-import com.bsuir.lagunovskaya.clinic.communication.entity.Clinic;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;
@@ -21,7 +21,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class DoctorFrame extends JFrame {
 
@@ -126,10 +128,7 @@ public class DoctorFrame extends JFrame {
                             = new ClientCommand("getUserByLogin", Arrays.asList(selectedDoctorLogin));
                     UserServerResponse userServerResponse = (UserServerResponse) ClientCommandSender.sendClientCommand(getUserByLoginCommand);
                     Doctor selectedDoctor = (Doctor) userServerResponse.getUser();
-                    String departmentInfo = "Относится к отеделению: " + selectedDoctor.getClinicDepartment().getName() +
-                            ", логин: " + selectedDoctor.getLogin();
-                    JOptionPane.showMessageDialog(DoctorFrame.this, departmentInfo,
-                            "Информация о докторе", JOptionPane.INFORMATION_MESSAGE);
+                    new DoctorDialog(DoctorFrame.this, selectedDoctor);
                 }
             }
         });
@@ -219,7 +218,26 @@ public class DoctorFrame extends JFrame {
         });
         eastPanel.add(tempRowPanel);
 
+        tempRowPanel = new JPanel(new FlowLayout());
+        JButton createDoctor = new JButton("Создать врача");
+        tempRowPanel.add(createDoctor);
+        createDoctor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new DoctorDialog(DoctorFrame.this, null);
+            }
+        });
+        eastPanel.add(tempRowPanel);
+
         return eastPanel;
+    }
+
+    public java.util.List<String> getPossibleDepartmentNames() {
+        List<String> departmentNames = new ArrayList<>();
+        for (int i = 0; i < clinicDepartmentsListModel.getSize(); i++) {
+            departmentNames.add(clinicDepartmentsListModel.getElementAt(i));
+        }
+        return departmentNames;
     }
 
 }

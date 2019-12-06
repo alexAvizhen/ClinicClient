@@ -15,9 +15,6 @@ import java.util.List;
 
 public class DepartmentDialog extends JDialog {
 
-    private Clinic clinic;
-    private ClinicDepartment clinicDepartment;
-
     private JTextField departmentNameField = new JTextField(20);
     private DefaultListModel<String> streetsListModel = new DefaultListModel<>();
     private JList<String> streetsList = new JList<>(streetsListModel);
@@ -28,7 +25,6 @@ public class DepartmentDialog extends JDialog {
     public DepartmentDialog(final DoctorFrame owner, final Clinic clinic, final ClinicDepartment clinicDepartment) {
         super(owner);
         setTitle("Отображение отделения");
-        this.clinicDepartment = clinicDepartment;
 
         setLayout(new BorderLayout());
         setSize(600, 300);
