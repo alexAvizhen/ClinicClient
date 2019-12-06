@@ -3,6 +3,7 @@ package com.bsuir.lagunovskaya.clinic.client.ui;
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DepartmentDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DoctorDialog;
+import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.PatientDialog;
 import com.bsuir.lagunovskaya.clinic.communication.AllClinicDepartmentsServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ClinicDepartmentServerResponse;
@@ -109,10 +110,7 @@ public class DoctorFrame extends JFrame {
                             = new ClientCommand("getUserByLogin", Arrays.asList(selectedPatientLogin));
                     UserServerResponse userServerResponse = (UserServerResponse) ClientCommandSender.sendClientCommand(getUserByLoginCommand);
                     Patient selectedPatient = (Patient) userServerResponse.getUser();
-                    String departmentInfo = "Относится к отеделению: " + selectedPatient.getClinicDepartment().getName() +
-                            ", логин: " + selectedPatient.getLogin();
-                    JOptionPane.showMessageDialog(DoctorFrame.this, departmentInfo,
-                            "Информация о пациенте", JOptionPane.INFORMATION_MESSAGE);
+                    new PatientDialog(DoctorFrame.this, selectedPatient);
                 }
             }
         });
@@ -225,6 +223,17 @@ public class DoctorFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new DoctorDialog(DoctorFrame.this, null);
+            }
+        });
+        eastPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        JButton createPatient = new JButton("Создать пациента");
+        tempRowPanel.add(createPatient);
+        createPatient.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new PatientDialog(DoctorFrame.this, null);
             }
         });
         eastPanel.add(tempRowPanel);

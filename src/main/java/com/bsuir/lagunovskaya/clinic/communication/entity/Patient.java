@@ -15,6 +15,10 @@ public class Patient extends User {
         return clinicDepartment;
     }
 
+    public void setClinicDepartment(ClinicDepartment clinicDepartment) {
+        this.clinicDepartment = clinicDepartment;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
