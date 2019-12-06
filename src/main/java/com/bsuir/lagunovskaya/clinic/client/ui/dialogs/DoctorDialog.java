@@ -4,7 +4,6 @@ import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.client.ui.DoctorFrame;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ClinicDepartmentServerResponse;
-import com.bsuir.lagunovskaya.clinic.communication.CreateOrUpdateDepartmentClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.CreateOrUpdateDoctorClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
@@ -14,30 +13,29 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Date;
 
 public class DoctorDialog extends JDialog {
 
     private JTextField loginField = new JTextField(20);
     private JTextField passwordField = new JTextField(20);
+    private JTextField surnameField = new JTextField(20);
+    private JTextField nameField = new JTextField(20);
+    private JTextField phoneNumberField = new JTextField(20);
+    private JSpinner birthDateSpinner = new JSpinner(new SpinnerDateModel());
+    final String birthDateFormatPattern = "yyyy-MM-dd";
+
     private JComboBox<String> departmentsComboBox = new JComboBox<>();
 
     public DoctorDialog(final DoctorFrame doctorFrame, final Doctor doctor) {
         super(doctorFrame);
 
-        setTitle("Отображение доктора");
+        setTitle("Врача");
         setLayout(new BorderLayout());
-        setSize(600, 300);
+        setSize(600, 500);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        for (String possibleDepartmentName : doctorFrame.getPossibleDepartmentNames()) {
-            departmentsComboBox.addItem(possibleDepartmentName);
-        }
-        if (doctor != null) {
-            loginField.setText(doctor.getLogin());
-            passwordField.setText(doctor.getPassword());
-            departmentsComboBox.setSelectedItem(doctor.getClinicDepartment().getName());
-        }
-        JPanel doctorDialogMainPanel = new JPanel(new GridLayout(3, 1));
+        JPanel doctorDialogMainPanel = new JPanel(new GridLayout(7, 1));
 
         JPanel tempRowPanel = new JPanel(new FlowLayout());
         tempRowPanel.add(new JLabel("Логин врача"));
@@ -48,6 +46,30 @@ public class DoctorDialog extends JDialog {
         tempRowPanel.add(new JLabel("Пароль врача"));
         tempRowPanel.add(passwordField);
         doctorDialogMainPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        tempRowPanel.add(new JLabel("Фамилия врача"));
+        tempRowPanel.add(surnameField);
+        doctorDialogMainPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        tempRowPanel.add(new JLabel("Имя врача"));
+        tempRowPanel.add(nameField);
+        doctorDialogMainPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        tempRowPanel.add(new JLabel("Мобильный номер врача"));
+        tempRowPanel.add(phoneNumberField);
+        doctorDialogMainPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(birthDateSpinner, birthDateFormatPattern);
+        birthDateSpinner.setEditor(timeEditor);
+        birthDateSpinner.setValue(new Date());
+        tempRowPanel.add(new JLabel("Дата рождения врача"));
+        tempRowPanel.add(birthDateSpinner);
+        doctorDialogMainPanel.add(tempRowPanel);
+
 
         tempRowPanel = new JPanel(new BorderLayout());
         tempRowPanel.add(new JLabel("Отделение врача"), BorderLayout.WEST);
@@ -81,6 +103,11 @@ public class DoctorDialog extends JDialog {
                     doctorToUpdateOrCreate.setPassword(passwordField.getText());
                     doctorToUpdateOrCreate.setClinicDepartment(selectedClinicDepartment);
                 }
+                doctorToUpdateOrCreate.setSurname(surnameField.getText());
+                doctorToUpdateOrCreate.setName(nameField.getText());
+                doctorToUpdateOrCreate.setBirthDate((Date) birthDateSpinner.getValue());
+                doctorToUpdateOrCreate.setPhoneNumber(phoneNumberField.getText());
+
                 CreateOrUpdateDoctorClientCommand createOrUpdateDoctorCommand =
                         new CreateOrUpdateDoctorClientCommand("createOrUpdateDoctor", doctorToUpdateOrCreate);
                 ClientCommandSender.sendClientCommand(createOrUpdateDoctorCommand);
@@ -89,8 +116,39 @@ public class DoctorDialog extends JDialog {
                 dispose();
             }
         });
-
+        if (doctor != null) {
+            JButton removeDoctorBtn = new JButton("Удалить врача");
+            buttonsPanel.add(removeDoctorBtn);
+            removeDoctorBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    ClientCommand removeDoctorByIdCommand = new ClientCommand("removeDoctorById", Arrays.asList(doctor.getId().toString()));
+                    ClientCommandSender.sendClientCommand(removeDoctorByIdCommand);
+                    JOptionPane.showMessageDialog(DoctorDialog.this, "Операция выполнена успешно");
+                    doctorFrame.loadClinicDepartments();
+                    dispose();
+                }
+            });
+        }
         add(buttonsPanel, BorderLayout.SOUTH);
+
+
+        for (String possibleDepartmentName : doctorFrame.getPossibleDepartmentNames()) {
+            departmentsComboBox.addItem(possibleDepartmentName);
+        }
+
+        if (doctor != null) {
+            loginField.setText(doctor.getLogin());
+            passwordField.setText(doctor.getPassword());
+            departmentsComboBox.setSelectedItem(doctor.getClinicDepartment().getName());
+            surnameField.setText(doctor.getSurname());
+            nameField.setText(doctor.getName());
+            phoneNumberField.setText(doctor.getPhoneNumber());
+            if (doctor.getBirthDate() != null) {
+                birthDateSpinner.setValue(doctor.getBirthDate());
+            }
+        }
+
         setVisible(true);
     }
 }

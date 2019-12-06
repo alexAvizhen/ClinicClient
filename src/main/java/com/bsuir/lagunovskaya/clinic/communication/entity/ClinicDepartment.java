@@ -10,6 +10,7 @@ public class ClinicDepartment implements Serializable {
     private Clinic clinic;
     private String name;
     private List<String> streets;
+    private Doctor mainDoctor;
 
     private List<Patient> patients;
     private List<Doctor> doctors;
@@ -69,5 +70,13 @@ public class ClinicDepartment implements Serializable {
 
     public void setDoctors(List<Doctor> doctors) {
         this.doctors = doctors;
+    }
+
+    public Doctor getMainDoctor() {
+        return mainDoctor;
+    }
+
+    public void setMainDoctor(Doctor mainDoctor) {
+        this.mainDoctor = mainDoctor;
     }
 }

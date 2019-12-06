@@ -36,7 +36,7 @@ public class DepartmentDialog extends JDialog {
             }
         }
 
-        JPanel departmentDialogMainPanel = new JPanel(new GridLayout(3, 1));
+        JPanel departmentDialogMainPanel = new JPanel(new GridLayout(4, 1));
         JPanel tempRowPanel = new JPanel(new FlowLayout());
         tempRowPanel.add(new JLabel("Имя отделения:"));
         tempRowPanel.add(departmentNameField);
@@ -51,6 +51,14 @@ public class DepartmentDialog extends JDialog {
         tempRowPanel.add(new JLabel("Новая улица"));
         tempRowPanel.add(newStreetField);
         departmentDialogMainPanel.add(tempRowPanel);
+
+        if (clinicDepartment != null) {
+            tempRowPanel = new JPanel(new FlowLayout());
+            tempRowPanel.add(new JLabel("Врачей в отделении: " + clinicDepartment.getDoctors().size()));
+            tempRowPanel.add(new JLabel("Пациентов в отделении: " + clinicDepartment.getPatients().size()));
+            departmentDialogMainPanel.add(tempRowPanel);
+
+        }
 
         add(departmentDialogMainPanel, BorderLayout.CENTER);
 

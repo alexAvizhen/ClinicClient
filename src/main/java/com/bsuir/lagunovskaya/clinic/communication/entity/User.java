@@ -1,12 +1,18 @@
 package com.bsuir.lagunovskaya.clinic.communication.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 public class User implements Serializable {
     private Integer id;
     private String login;
     private String password;
+
+    private String surname;
+    private String name;
+    private String phoneNumber;
+    private Date birthDate;
 
     public User(Integer id, String login, String password) {
         this.id = id;
@@ -40,6 +46,38 @@ public class User implements Serializable {
 
     public boolean isAdmin() {
         return false;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override

@@ -53,7 +53,7 @@ public class DoctorFrame extends JFrame {
         this.loginFrame = loginFrame;
         this.activeDoctor = doctor;
         setTitle("Doctor Clinic Application Client"); //название окна
-        setSize(new Dimension(800, 600)); //устанавливаем размер окна
+        setSize(new Dimension(1000, 600)); //устанавливаем размер окна
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); //выход из приложения при нажатии  на крестит в окне
         setLocationRelativeTo(null);
         addListenerOnCloseDoctorFrame();

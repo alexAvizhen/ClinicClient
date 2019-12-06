@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Patient extends User {
 
     private ClinicDepartment clinicDepartment;
+    private String address;
 
     public Patient(String login, String password, ClinicDepartment clinicDepartment) {
         super(null, login, password);
@@ -17,6 +18,14 @@ public class Patient extends User {
 
     public void setClinicDepartment(ClinicDepartment clinicDepartment) {
         this.clinicDepartment = clinicDepartment;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override
