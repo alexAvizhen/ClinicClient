@@ -1,7 +1,7 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
-import com.bsuir.lagunovskaya.clinic.client.ui.DoctorFrame;
+import com.bsuir.lagunovskaya.clinic.client.ui.UserFrame;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ClinicDepartmentServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.CreateOrUpdatePatientClientCommand;
@@ -27,10 +27,10 @@ public class PatientDialog extends JDialog {
     final String birthDateFormatPattern = "yyyy-MM-dd";
     private JComboBox<String> departmentsComboBox = new JComboBox<>();
 
-    public PatientDialog(final DoctorFrame doctorFrame, final Patient patient) {
-        super(doctorFrame);
+    public PatientDialog(final UserFrame userFrame, final Patient patient, boolean isWriteMode) {
+        super(userFrame);
 
-        setTitle("Пациента");
+        setTitle("Пациент");
         setLayout(new BorderLayout());
         setSize(600, 500);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -117,7 +117,7 @@ public class PatientDialog extends JDialog {
                         new CreateOrUpdatePatientClientCommand("createOrUpdatePatient", patientToUpdateOrCreate);
                 ClientCommandSender.sendClientCommand(createOrUpdatePatientCommand);
                 JOptionPane.showMessageDialog(PatientDialog.this, "Операция выполнена успешно");
-                doctorFrame.loadClinicDepartments();
+                userFrame.loadClinicDepartments();
                 dispose();
             }
         });
@@ -138,15 +138,17 @@ public class PatientDialog extends JDialog {
                     ClientCommand removePatientByIdCommand = new ClientCommand("removePatientById", Arrays.asList(patient.getId().toString()));
                     ClientCommandSender.sendClientCommand(removePatientByIdCommand);
                     JOptionPane.showMessageDialog(PatientDialog.this, "Операция выполнена успешно");
-                    doctorFrame.loadClinicDepartments();
+                    userFrame.loadClinicDepartments();
                     dispose();
                 }
             });
         }
-        add(buttonsPanel, BorderLayout.SOUTH);
+        if (isWriteMode) {
+            add(buttonsPanel, BorderLayout.SOUTH);
+        }
 
 
-        for (String possibleDepartmentName : doctorFrame.getPossibleDepartmentNames()) {
+        for (String possibleDepartmentName : userFrame.getPossibleDepartmentNames()) {
             departmentsComboBox.addItem(possibleDepartmentName);
         }
         if (patient != null) {

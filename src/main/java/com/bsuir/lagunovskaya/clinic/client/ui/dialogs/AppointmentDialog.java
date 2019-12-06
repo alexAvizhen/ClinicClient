@@ -1,6 +1,6 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
-import com.bsuir.lagunovskaya.clinic.client.ui.DoctorFrame;
+import com.bsuir.lagunovskaya.clinic.client.ui.UserFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +16,8 @@ public class AppointmentDialog extends JDialog {
     private JSpinner timeSpinner = new JSpinner(new SpinnerDateModel());
     private JTextArea commentToAppointment = new JTextArea(30, 20);
 
-    public AppointmentDialog(final DoctorFrame doctorFrame, String doctorLogin, String patientLogin) {
-        super(doctorFrame);
+    public AppointmentDialog(final UserFrame userFrame, String doctorLogin, String patientLogin) {
+        super(userFrame);
 
         setTitle("Оформление приёма");
         setLayout(new BorderLayout());
@@ -69,7 +69,7 @@ public class AppointmentDialog extends JDialog {
                         " и пациента " + patientLoginField.getText() + " на " + simpleDateFormat.format(date) + " с комментарием " +
                         commentToAppointment.getText();
                 JOptionPane.showMessageDialog(null, message);
-                doctorFrame.loadClinicDepartments();
+                userFrame.loadClinicDepartments();
                 dispose();
             }
         });

@@ -63,10 +63,7 @@ public class LoginFrame extends JFrame {
                 if ("success".equals(loginServerResponse.getLoginStatus())) {
                     LoginFrame.this.setVisible(false);
                     User user = loginServerResponse.getUser();
-                    if (user.isAdmin()) {
-                        DoctorFrame doctorFrame = new DoctorFrame(LoginFrame.this, (Doctor) user);
-                    }
-
+                    UserFrame userFrame = new UserFrame(LoginFrame.this, user);
 
                 } else {
                     JOptionPane.showMessageDialog(null, "Cannot login. Please check login and password");

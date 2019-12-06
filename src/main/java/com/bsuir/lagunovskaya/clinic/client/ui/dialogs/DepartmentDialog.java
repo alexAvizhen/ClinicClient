@@ -1,7 +1,7 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
-import com.bsuir.lagunovskaya.clinic.client.ui.DoctorFrame;
+import com.bsuir.lagunovskaya.clinic.client.ui.UserFrame;
 import com.bsuir.lagunovskaya.clinic.communication.CreateOrUpdateDepartmentClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Clinic;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
@@ -21,8 +21,7 @@ public class DepartmentDialog extends JDialog {
 
     private JTextField newStreetField = new JTextField(20);
 
-
-    public DepartmentDialog(final DoctorFrame owner, final Clinic clinic, final ClinicDepartment clinicDepartment) {
+    public DepartmentDialog(final UserFrame owner, final Clinic clinic, final ClinicDepartment clinicDepartment, boolean isWriteMode) {
         super(owner);
         setTitle("Отображение отделения");
 
@@ -116,7 +115,9 @@ public class DepartmentDialog extends JDialog {
             }
         });
         buttonsPanel.add(createOrUpdateButton);
-        add(buttonsPanel, BorderLayout.SOUTH);
+        if (isWriteMode) {
+            add(buttonsPanel, BorderLayout.SOUTH);
+        }
         setVisible(true);
     }
 }

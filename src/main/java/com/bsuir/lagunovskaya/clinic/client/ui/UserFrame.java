@@ -13,7 +13,9 @@ import com.bsuir.lagunovskaya.clinic.communication.UserServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;
+import com.bsuir.lagunovskaya.clinic.communication.entity.User;
 
+import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -28,10 +30,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DoctorFrame extends JFrame {
+public class UserFrame extends JFrame {
 
     private LoginFrame loginFrame;
-    private Doctor activeDoctor;
+    private User activeUser;
 
     private DefaultListModel<String> clinicDepartmentsListModel;
     private JList<String> clinicDepartmentsList;
@@ -48,10 +50,17 @@ public class DoctorFrame extends JFrame {
     private JTextField doctorLoginForAppointmentField = new JTextField(20);
     private JTextField patientLoginForAppointmentField = new JTextField(20);
 
+    private boolean isReadOnlyMode = false;
 
-    public DoctorFrame(final LoginFrame loginFrame, Doctor doctor) throws HeadlessException {
+
+    public UserFrame(final LoginFrame loginFrame, User activeUser) throws HeadlessException {
         this.loginFrame = loginFrame;
-        this.activeDoctor = doctor;
+        this.activeUser = activeUser;
+        if (activeUser.isAdmin()) {
+            isReadOnlyMode = false;
+        } else {
+            isReadOnlyMode = true;
+        }
         setTitle("Doctor Clinic Application Client"); //название окна
         setSize(new Dimension(1000, 600)); //устанавливаем размер окна
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); //выход из приложения при нажатии  на крестит в окне
@@ -64,8 +73,11 @@ public class DoctorFrame extends JFrame {
         JPanel centerPanel = buildCenterPanel();
         add(centerPanel, BorderLayout.CENTER);
 
-        JPanel eastPanel = buildEastPanel();
-        add(eastPanel, BorderLayout.EAST);
+        if (activeUser.isAdmin()) {
+            JPanel eastPanel = buildEastPanel();
+            add(eastPanel, BorderLayout.EAST);
+        }
+
 
 
         loadClinicDepartments();
@@ -124,7 +136,7 @@ public class DoctorFrame extends JFrame {
                             = new ClientCommand("getUserByLogin", Arrays.asList(selectedPatientLogin));
                     UserServerResponse userServerResponse = (UserServerResponse) ClientCommandSender.sendClientCommand(getUserByLoginCommand);
                     Patient selectedPatient = (Patient) userServerResponse.getUser();
-                    new PatientDialog(DoctorFrame.this, selectedPatient);
+                    new PatientDialog(UserFrame.this, selectedPatient, activeUser.isAdmin());
                 }
             }
         });
@@ -149,7 +161,7 @@ public class DoctorFrame extends JFrame {
                             = new ClientCommand("getUserByLogin", Arrays.asList(selectedDoctorLogin));
                     UserServerResponse userServerResponse = (UserServerResponse) ClientCommandSender.sendClientCommand(getUserByLoginCommand);
                     Doctor selectedDoctor = (Doctor) userServerResponse.getUser();
-                    new DoctorDialog(DoctorFrame.this, selectedDoctor);
+                    new DoctorDialog(UserFrame.this, selectedDoctor, activeUser.isAdmin());
                 }
             }
         });
@@ -189,7 +201,7 @@ public class DoctorFrame extends JFrame {
                     ClinicDepartmentServerResponse clinicDepartmentServerResponse
                             = (ClinicDepartmentServerResponse) ClientCommandSender.sendClientCommand(getClinicDepartmentByNameCommand);
                     ClinicDepartment clinicDepartment = clinicDepartmentServerResponse.getClinicDepartment();
-                    new DepartmentDialog(DoctorFrame.this, clinicDepartment.getClinic(), clinicDepartment);
+                    new DepartmentDialog(UserFrame.this, clinicDepartment.getClinic(), clinicDepartment, activeUser.isAdmin());
                 }
             }
         });
@@ -198,9 +210,17 @@ public class DoctorFrame extends JFrame {
     private JPanel buildNorthPanel() {
         JPanel northPanel = new JPanel(new FlowLayout());
 
-        JLabel activeDoctorInfoLabel = new JLabel("Ваш Логин: " + activeDoctor.getLogin() +
-                ", Ваше отделение: " + activeDoctor.getClinicDepartment().getName());
-        northPanel.add(activeDoctorInfoLabel);
+        JLabel activeUserInfoLabel = new JLabel();
+        if (activeUser.isAdmin()) {
+            Doctor activeDoctor = (Doctor) this.activeUser;
+            activeUserInfoLabel.setText("Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
+                    ", Ваше отделение: " + activeDoctor.getClinicDepartment().getName());
+        } else {
+            Patient activePatient = (Patient) this.activeUser;
+            activeUserInfoLabel.setText("Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
+                    ", Ваше отделение: " + activePatient.getClinicDepartment().getName());
+        }
+        northPanel.add(activeUserInfoLabel);
 
         return northPanel;
     }
@@ -221,7 +241,7 @@ public class DoctorFrame extends JFrame {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
-                DoctorFrame.this.loginFrame.activateLoginFrame();
+                UserFrame.this.loginFrame.activateLoginFrame();
             }
         });
     }
@@ -231,10 +251,17 @@ public class DoctorFrame extends JFrame {
         JPanel tempRowPanel = new JPanel(new FlowLayout());
         JButton createDepartment = new JButton("Создать отделение");
         tempRowPanel.add(createDepartment);
+        final Doctor activeDoctor;
+        if (activeUser.isAdmin()) {
+            activeDoctor = ((Doctor) activeUser);
+        } else {
+            throw new IllegalArgumentException("This panel is available only for admins(doctors) ");
+        }
+
         createDepartment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new DepartmentDialog(DoctorFrame.this, activeDoctor.getClinicDepartment().getClinic(), null);
+                new DepartmentDialog(UserFrame.this, activeDoctor.getClinicDepartment().getClinic(), null, activeUser.isAdmin());
             }
         });
         eastPanel.add(tempRowPanel);
@@ -245,7 +272,7 @@ public class DoctorFrame extends JFrame {
         createDoctor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new DoctorDialog(DoctorFrame.this, null);
+                new DoctorDialog(UserFrame.this, null, activeUser.isAdmin());
             }
         });
         eastPanel.add(tempRowPanel);
@@ -256,7 +283,7 @@ public class DoctorFrame extends JFrame {
         createPatient.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new PatientDialog(DoctorFrame.this, null);
+                new PatientDialog(UserFrame.this, null, activeUser.isAdmin());
             }
         });
         eastPanel.add(tempRowPanel);
@@ -284,10 +311,10 @@ public class DoctorFrame extends JFrame {
                 String doctorLogin = doctorLoginForAppointmentField.getText();
                 String patientLogin = patientLoginForAppointmentField.getText();
                 if (StringUtils.isEmpty(doctorLogin) || StringUtils.isEmpty(patientLogin)) {
-                    JOptionPane.showMessageDialog(DoctorFrame.this,
+                    JOptionPane.showMessageDialog(UserFrame.this,
                             "Выберите доктора и пациента, чтобы назначить приём");
                 } else {
-                    new AppointmentDialog(DoctorFrame.this, doctorLogin, patientLogin);
+                    new AppointmentDialog(UserFrame.this, doctorLogin, patientLogin);
                 }
             }
         });
@@ -302,6 +329,10 @@ public class DoctorFrame extends JFrame {
             departmentNames.add(clinicDepartmentsListModel.getElementAt(i));
         }
         return departmentNames;
+    }
+
+    public void setReadOnlyMode(boolean isReadOnlyMode) {
+        this.isReadOnlyMode = isReadOnlyMode;
     }
 
 }
