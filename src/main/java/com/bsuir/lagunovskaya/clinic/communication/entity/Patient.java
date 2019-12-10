@@ -32,13 +32,11 @@ public class Patient extends User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Patient)) return false;
-        if (!super.equals(o)) return false;
-        Patient patient = (Patient) o;
-        return Objects.equals(getClinicDepartment(), patient.getClinicDepartment());
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getClinicDepartment());
+        return Objects.hash(super.hashCode(), getClinicDepartment(), getAddress());
     }
 }

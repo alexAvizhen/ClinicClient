@@ -1,6 +1,6 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
-import com.bsuir.lagunovskaya.clinic.client.ui.UserFrame;
+import com.bsuir.lagunovskaya.clinic.client.ui.frames.UserFrame;
 
 import javax.swing.*;
 import java.awt.*;

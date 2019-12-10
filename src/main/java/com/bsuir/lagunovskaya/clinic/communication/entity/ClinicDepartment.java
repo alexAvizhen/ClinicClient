@@ -3,6 +3,7 @@ package com.bsuir.lagunovskaya.clinic.communication.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ClinicDepartment implements Serializable {
 
@@ -10,7 +11,6 @@ public class ClinicDepartment implements Serializable {
     private Clinic clinic;
     private String name;
     private List<String> streets;
-    private Doctor mainDoctor;
 
     private List<Patient> patients;
     private List<Doctor> doctors;
@@ -72,11 +72,16 @@ public class ClinicDepartment implements Serializable {
         this.doctors = doctors;
     }
 
-    public Doctor getMainDoctor() {
-        return mainDoctor;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ClinicDepartment)) return false;
+        ClinicDepartment that = (ClinicDepartment) o;
+        return Objects.equals(getId(), that.getId());
     }
 
-    public void setMainDoctor(Doctor mainDoctor) {
-        this.mainDoctor = mainDoctor;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getClinic(), getName(), getStreets(), getPatients(), getDoctors());
     }
 }

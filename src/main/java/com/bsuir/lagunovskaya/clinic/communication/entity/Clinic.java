@@ -3,6 +3,7 @@ package com.bsuir.lagunovskaya.clinic.communication.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Clinic implements Serializable {
     private Integer id;
@@ -47,5 +48,18 @@ public class Clinic implements Serializable {
 
     public List<ClinicDepartment> getClinicDepartments() {
         return clinicDepartments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Clinic)) return false;
+        Clinic clinic = (Clinic) o;
+        return Objects.equals(getId(), clinic.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getAddress(), getDescription(), getClinicDepartments());
     }
 }

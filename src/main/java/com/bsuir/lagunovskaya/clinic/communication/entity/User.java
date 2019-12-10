@@ -85,13 +85,11 @@ public class User implements Serializable {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(getId(), user.getId()) &&
-                Objects.equals(getLogin(), user.getLogin()) &&
-                Objects.equals(getPassword(), user.getPassword());
+        return Objects.equals(getId(), user.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getLogin(), getPassword());
+        return Objects.hash(getId(), getLogin(), getPassword(), getSurname(), getName(), getPhoneNumber(), getBirthDate());
     }
 }

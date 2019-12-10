@@ -1,5 +1,6 @@
 package com.bsuir.lagunovskaya.clinic.client.service;
 
+import com.bsuir.lagunovskaya.clinic.client.ClinicClient;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ServerResponse;
 
@@ -19,7 +20,7 @@ public class ClientCommandSender {
         try {
             // создаём сокет общения на стороне клиента в конструкторе объекта
             // адрес - локальный хост, порт - 4004, такой же как у сервера
-            clientSocket = new Socket("localhost", 3345);
+            clientSocket = new Socket("localhost", Integer.valueOf(ClinicClient.properties.getProperty("server.port")));
             try {
                 // писать туда же
                 out = new ObjectOutputStream(clientSocket.getOutputStream());

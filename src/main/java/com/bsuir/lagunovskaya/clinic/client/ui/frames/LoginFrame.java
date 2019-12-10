@@ -1,9 +1,8 @@
-package com.bsuir.lagunovskaya.clinic.client.ui;
+package com.bsuir.lagunovskaya.clinic.client.ui.frames;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.LoginServerResponse;
-import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.User;
 
 

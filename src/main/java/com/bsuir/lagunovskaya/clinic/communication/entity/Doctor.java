@@ -28,9 +28,7 @@ public class Doctor extends User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Doctor)) return false;
-        if (!super.equals(o)) return false;
-        Doctor doctor = (Doctor) o;
-        return Objects.equals(getClinicDepartment(), doctor.getClinicDepartment());
+        return super.equals(o);
     }
 
     @Override

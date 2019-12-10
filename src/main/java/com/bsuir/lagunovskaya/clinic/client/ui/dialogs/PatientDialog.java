@@ -1,7 +1,7 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
-import com.bsuir.lagunovskaya.clinic.client.ui.UserFrame;
+import com.bsuir.lagunovskaya.clinic.client.ui.frames.UserFrame;
 import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.ClinicDepartmentServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.CreateOrUpdatePatientClientCommand;
