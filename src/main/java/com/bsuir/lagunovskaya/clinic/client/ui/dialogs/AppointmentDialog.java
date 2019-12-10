@@ -1,6 +1,8 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
+import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.client.ui.frames.UserFrame;
+import com.bsuir.lagunovskaya.clinic.communication.command.CreateAppointmentClientCommand;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,12 +65,15 @@ public class AppointmentDialog extends JDialog {
         makeAnAppointment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Date date = (Date) timeSpinner.getValue();
+                Date appointmentDate = (Date) timeSpinner.getValue();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
                 String message = "Создан приём для доктора " + doctorLoginField.getText() +
-                        " и пациента " + patientLoginField.getText() + " на " + simpleDateFormat.format(date) + " с комментарием " +
+                        " и пациента " + patientLoginField.getText() + " на " + simpleDateFormat.format(appointmentDate) + " с комментарием " +
                         commentToAppointment.getText();
-                JOptionPane.showMessageDialog(null, message);
+                CreateAppointmentClientCommand createAppointmentCommand = new CreateAppointmentClientCommand("createAppointment",
+                        doctorLoginField.getText(), patientLoginField.getText(), appointmentDate, commentToAppointment.getText());
+                ClientCommandSender.sendClientCommand(createAppointmentCommand);
+                JOptionPane.showMessageDialog(AppointmentDialog.this, message);
                 userFrame.loadClinicDepartments();
                 dispose();
             }

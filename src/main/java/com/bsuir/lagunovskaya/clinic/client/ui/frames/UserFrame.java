@@ -4,6 +4,7 @@ import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.AppointmentDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DepartmentDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DoctorDialog;
+import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.MyAppointmentsDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.PatientDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.ClinicDepartmentsTableModel;
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.DoctorsTableModel;
@@ -228,7 +229,7 @@ public class UserFrame extends JFrame {
     }
 
     private JPanel buildEastPanel() {
-        JPanel eastPanel = new JPanel(new GridLayout(4, 1));
+        JPanel eastPanel = new JPanel(new GridLayout(5, 1));
         JPanel tempRowPanel = new JPanel(new FlowLayout());
         JButton createDepartment = new JButton("Создать отделение");
         tempRowPanel.add(createDepartment);
@@ -265,6 +266,17 @@ public class UserFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new PatientDialog(UserFrame.this, null, activeUser.isAdmin());
+            }
+        });
+        eastPanel.add(tempRowPanel);
+
+        tempRowPanel = new JPanel(new FlowLayout());
+        JButton showMyAppointments = new JButton("Показать мои приёмы");
+        tempRowPanel.add(showMyAppointments);
+        showMyAppointments.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new MyAppointmentsDialog(UserFrame.this, activeUser);
             }
         });
         eastPanel.add(tempRowPanel);
