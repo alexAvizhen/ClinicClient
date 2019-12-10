@@ -3,15 +3,19 @@ package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.client.ui.frames.UserFrame;
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.AppointmentsTableModel;
+import com.bsuir.lagunovskaya.clinic.client.utils.FileUtils;
 import com.bsuir.lagunovskaya.clinic.communication.command.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Appointment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.User;
 import com.bsuir.lagunovskaya.clinic.communication.response.UserAppointmentsServerResponse;
+import sun.reflect.misc.FieldUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class MyAppointmentsDialog extends JDialog {
@@ -39,12 +43,17 @@ public class MyAppointmentsDialog extends JDialog {
         appointmentsCenterPanel.add(scrolledAppointmentsTable, BorderLayout.CENTER);
 
         JPanel appointmentsButtonPanel = new JPanel(new FlowLayout());
-        JButton saveMyAppointmentsInFileBtn = new JButton("Сохранить мои приёмы в файл");
+        JButton saveMyAppointmentsInFileBtn = new JButton("Открыть мои приёмы в файле");
         appointmentsButtonPanel.add(saveMyAppointmentsInFileBtn);
         saveMyAppointmentsInFileBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(MyAppointmentsDialog.this, "Сохраняю в файл");
+                String resultFile = FileUtils.saveAppointmentsToExcel("Мои приёмы", appointmentsTableModel);
+                try {
+                    Desktop.getDesktop().open(new File(resultFile));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
         appointmentsCenterPanel.add(appointmentsButtonPanel, BorderLayout.SOUTH);

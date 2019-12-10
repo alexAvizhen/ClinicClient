@@ -47,7 +47,7 @@ public class AppointmentsTableModel extends AbstractTableModel {
         } else if (columnIndex == 7) {
             return appointment.getCommentToAppointment();
         }
-        return null;
+        return "";
     }
 
     @Override

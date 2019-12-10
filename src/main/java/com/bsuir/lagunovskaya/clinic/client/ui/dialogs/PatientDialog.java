@@ -121,14 +121,6 @@ public class PatientDialog extends JDialog {
                 dispose();
             }
         });
-        JButton showMedCardBtn = new JButton("Посмотреть медкарту пациента");
-        buttonsPanel.add(showMedCardBtn);
-        showMedCardBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(PatientDialog.this, "Здесь будет медкарта пациента", "Медкарта пациента", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
         if (patient != null) {
             JButton removePatientBtn = new JButton("Удалить пациента");
             buttonsPanel.add(removePatientBtn);
