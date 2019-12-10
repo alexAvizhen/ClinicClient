@@ -1,8 +1,8 @@
 package com.bsuir.lagunovskaya.clinic.client.service;
 
 import com.bsuir.lagunovskaya.clinic.client.ClinicClient;
-import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
-import com.bsuir.lagunovskaya.clinic.communication.ServerResponse;
+import com.bsuir.lagunovskaya.clinic.communication.command.ClientCommand;
+import com.bsuir.lagunovskaya.clinic.communication.response.ServerResponse;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

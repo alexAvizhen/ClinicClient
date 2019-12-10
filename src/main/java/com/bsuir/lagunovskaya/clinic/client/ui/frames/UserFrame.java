@@ -9,8 +9,8 @@ import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.ClinicDepartmentsTa
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.DoctorsTableModel;
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.PatientTableModel;
 import com.bsuir.lagunovskaya.clinic.client.utils.StringUtils;
-import com.bsuir.lagunovskaya.clinic.communication.AllClinicDepartmentsServerResponse;
-import com.bsuir.lagunovskaya.clinic.communication.ClientCommand;
+import com.bsuir.lagunovskaya.clinic.communication.response.AllClinicDepartmentsServerResponse;
+import com.bsuir.lagunovskaya.clinic.communication.command.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;

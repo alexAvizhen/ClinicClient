@@ -1,4 +1,4 @@
-package com.bsuir.lagunovskaya.clinic.communication;
+package com.bsuir.lagunovskaya.clinic.communication.response;
 
 import java.util.ArrayList;
 import java.util.List;

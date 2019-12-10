@@ -1,4 +1,4 @@
-package com.bsuir.lagunovskaya.clinic.communication;
+package com.bsuir.lagunovskaya.clinic.communication.response;
 
 
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
