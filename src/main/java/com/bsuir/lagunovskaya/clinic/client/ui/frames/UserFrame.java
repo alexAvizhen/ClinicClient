@@ -11,18 +11,12 @@ import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.ClinicDepartmentsTa
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.DoctorsTableModel;
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.PatientTableModel;
 import com.bsuir.lagunovskaya.clinic.client.utils.StringUtils;
-import com.bsuir.lagunovskaya.clinic.communication.response.AllClinicDepartmentsServerResponse;
 import com.bsuir.lagunovskaya.clinic.communication.command.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;
 import com.bsuir.lagunovskaya.clinic.communication.entity.User;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
+import com.bsuir.lagunovskaya.clinic.communication.response.AllClinicDepartmentsServerResponse;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,18 +47,9 @@ public class UserFrame extends JFrame {
     private JTextField doctorLoginForAppointmentField = new JTextField(20);
     private JTextField patientLoginForAppointmentField = new JTextField(20);
 
-    private boolean isReadOnlyMode = false;
-
-
     public UserFrame(final LoginFrame loginFrame, User activeUser) throws HeadlessException {
         this.loginFrame = loginFrame;
         this.activeUser = activeUser;
-        if (activeUser.isAdmin()) {
-            isReadOnlyMode = false;
-        } else {
-            isReadOnlyMode = true;
-        }
-        setTitle("Doctor Clinic Application Client"); //название окна
         setSize(new Dimension(1200, 600)); //устанавливаем размер окна
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); //выход из приложения при нажатии  на крестит в окне
         setLocationRelativeTo(null);
@@ -76,12 +61,13 @@ public class UserFrame extends JFrame {
         JPanel centerPanel = buildCenterPanel();
         add(centerPanel, BorderLayout.CENTER);
 
-        if (activeUser.isAdmin()) {
-            JPanel eastPanel = buildEastPanel();
-            add(eastPanel, BorderLayout.EAST);
-        }
+        JPanel eastPanel = buildEastPanel();
+        add(eastPanel, BorderLayout.EAST);
 
         loadClinicDepartments();
+        if (!activeUser.isAdmin()) {
+            patientLoginForAppointmentField.setText(activeUser.getLogin());
+        }
         setVisible(true);
     }
 
@@ -116,6 +102,9 @@ public class UserFrame extends JFrame {
         tempRowPanel = new JPanel(new BorderLayout());
         tempRowPanel.add(new JLabel("Пациенты выбранного отделения"), BorderLayout.NORTH);
         tempRowPanel.add(scrolledPatientsTable, BorderLayout.CENTER);
+        if (!activeUser.isAdmin()) {
+            tempRowPanel.setVisible(false);
+        }
         centerPanel.add(tempRowPanel);
 
         return centerPanel;
@@ -125,14 +114,16 @@ public class UserFrame extends JFrame {
         patientsTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int selectedRow = patientsTable.getSelectedRow();
-                Patient selectedPatient = patientsTableModel.getPatientAtRow(selectedRow);
-                if (e.getClickCount() == 1) {
-                    //single click
-                    patientLoginForAppointmentField.setText(selectedPatient.getLogin());
-                } else {
-                    //double click
-                    new PatientDialog(UserFrame.this, selectedPatient, activeUser.isAdmin());
+                if (activeUser.isAdmin()) {
+                    int selectedRow = patientsTable.getSelectedRow();
+                    Patient selectedPatient = patientsTableModel.getPatientAtRow(selectedRow);
+                    if (e.getClickCount() == 1) {
+                        //single click
+                        patientLoginForAppointmentField.setText(selectedPatient.getLogin());
+                    } else {
+                        //double click
+                        new PatientDialog(UserFrame.this, selectedPatient, activeUser.isAdmin());
+                    }
                 }
             }
         });
@@ -149,7 +140,9 @@ public class UserFrame extends JFrame {
                     doctorLoginForAppointmentField.setText(selectedDoctor.getLogin());
                 } else {
                     //double click
-                    new DoctorDialog(UserFrame.this, selectedDoctor, activeUser.isAdmin());
+                    if (activeUser.isAdmin()) {
+                        new DoctorDialog(UserFrame.this, selectedDoctor, activeUser.isAdmin());
+                    }
                 }
             }
         });
@@ -167,9 +160,11 @@ public class UserFrame extends JFrame {
                     //single click
                     fillDoctorsAndPatientsTablesForDepartment(clinicDepartment);
                 } else {
-
-                    new DepartmentDialog(UserFrame.this, clinicDepartment.getClinic(), clinicDepartment, activeUser.isAdmin());
+                    if (activeUser.isAdmin()) {
+                        new DepartmentDialog(UserFrame.this, clinicDepartment.getClinic(), clinicDepartment, activeUser.isAdmin());
+                    }
                 }
+
             }
         });
     }
@@ -195,11 +190,13 @@ public class UserFrame extends JFrame {
         JLabel activeUserInfoLabel = new JLabel();
         if (activeUser.isAdmin()) {
             Doctor activeDoctor = (Doctor) this.activeUser;
-            activeUserInfoLabel.setText("Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
+            setTitle("Приложение поликлинники " + activeDoctor.getClinicDepartment().getClinic().getDescription());
+            activeUserInfoLabel.setText("Уважаемый врач, Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
                     ", Ваше отделение: " + activeDoctor.getClinicDepartment().getName());
         } else {
             Patient activePatient = (Patient) this.activeUser;
-            activeUserInfoLabel.setText("Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
+            setTitle("Приложение поликлинники " + activePatient.getClinicDepartment().getClinic().getDescription());
+            activeUserInfoLabel.setText("Уважаемый пациент, Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
                     ", Ваше отделение: " + activePatient.getClinicDepartment().getName());
         }
         northPanel.add(activeUserInfoLabel);
@@ -237,95 +234,87 @@ public class UserFrame extends JFrame {
 
     private JPanel buildEastPanel() {
         JPanel eastPanel = new JPanel(new GridLayout(3, 1));
-        JPanel tempRowPanel = new JPanel(new GridLayout(3, 1));
-        JPanel tempCellPanel = new JPanel(new FlowLayout());
+        JPanel createClinicObjectsPanel = new JPanel(new GridLayout(3, 1));
+        JPanel createClinicDepartamentPanel = new JPanel(new FlowLayout());
         JButton createDepartment = new JButton("Создать отделение");
-        tempCellPanel.add(createDepartment);
-        tempRowPanel.add(tempCellPanel);
-        final Doctor activeDoctor;
-        if (activeUser.isAdmin()) {
-            activeDoctor = ((Doctor) activeUser);
-        } else {
-            throw new IllegalArgumentException("This panel is available only for admins(doctors) ");
-        }
+        createClinicDepartamentPanel.add(createDepartment);
+        createClinicObjectsPanel.add(createClinicDepartamentPanel);
+
 
         createDepartment.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Doctor activeDoctor = ((Doctor) activeUser);
                 new DepartmentDialog(UserFrame.this, activeDoctor.getClinicDepartment().getClinic(), null, activeUser.isAdmin());
             }
         });
-        eastPanel.add(tempRowPanel);
 
-//        tempRowPanel = new JPanel(new FlowLayout());
-        tempCellPanel = new JPanel(new FlowLayout());
+        JPanel createDoctorPanel = new JPanel(new FlowLayout());
         JButton createDoctor = new JButton("Создать врача");
-        tempCellPanel.add(createDoctor);
-        tempRowPanel.add(tempCellPanel);
+        createDoctorPanel.add(createDoctor);
+        createClinicObjectsPanel.add(createDoctorPanel);
         createDoctor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new DoctorDialog(UserFrame.this, null, activeUser.isAdmin());
             }
         });
-        eastPanel.add(tempRowPanel);
 
-//        tempRowPanel = new JPanel(new FlowLayout());
-        tempCellPanel = new JPanel(new FlowLayout());
+        JPanel createPatientPanel = new JPanel(new FlowLayout());
         JButton createPatient = new JButton("Создать пациента");
-        tempCellPanel.add(createPatient);
-        tempRowPanel.add(tempCellPanel);
+        createPatientPanel.add(createPatient);
+        createClinicObjectsPanel.add(createPatientPanel);
         createPatient.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new PatientDialog(UserFrame.this, null, activeUser.isAdmin());
             }
         });
-        eastPanel.add(tempRowPanel);
+        if (activeUser.isAdmin()) {
+            eastPanel.add(createClinicObjectsPanel);
+        }
 
-        tempRowPanel = new JPanel(new GridLayout(2, 1));
-        tempCellPanel = new JPanel(new FlowLayout());
+        JPanel appointmentsInfoPanel = new JPanel(new GridLayout(2, 1));
+        JPanel showMyAppointmentsPanel = new JPanel(new FlowLayout());
         JButton showMyAppointments = new JButton("Показать мои приёмы");
-        tempCellPanel.add(showMyAppointments);
-        tempRowPanel.add(tempCellPanel);
+        showMyAppointmentsPanel.add(showMyAppointments);
+        appointmentsInfoPanel.add(showMyAppointmentsPanel);
         showMyAppointments.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new MyAppointmentsDialog(UserFrame.this, activeUser);
             }
         });
-        eastPanel.add(tempRowPanel);
 
-//        tempRowPanel = new JPanel(new FlowLayout());
-        tempCellPanel = new JPanel(new FlowLayout());
+        JPanel showAppointmentsStatsPanel = new JPanel(new FlowLayout());
         JButton showAppointmentsStatsBtn = new JButton("Показать статистику приёмов");
-        tempCellPanel.add(showAppointmentsStatsBtn);
-        tempRowPanel.add(tempCellPanel);
+        showAppointmentsStatsPanel.add(showAppointmentsStatsBtn);
+        appointmentsInfoPanel.add(showAppointmentsStatsPanel);
         showAppointmentsStatsBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AppointmentsStatsDialog(UserFrame.this);
             }
         });
-        eastPanel.add(tempRowPanel);
+        eastPanel.add(appointmentsInfoPanel);
 
-        JPanel appointmentPanel = new JPanel(new GridLayout(3, 1));
-        tempRowPanel = new JPanel(new FlowLayout());
-        tempRowPanel.add(new JLabel("Врач для приёма"));
+        JPanel createAppointmentPanel = new JPanel(new GridLayout(3, 1));
+        JPanel doctorCreateAppointmentPanel = new JPanel(new FlowLayout());
+        doctorCreateAppointmentPanel.add(new JLabel("Врач для приёма"));
         doctorLoginForAppointmentField.setEditable(false);
-        tempRowPanel.add(doctorLoginForAppointmentField);
-        appointmentPanel.add(tempRowPanel);
+        doctorCreateAppointmentPanel.add(doctorLoginForAppointmentField);
+        createAppointmentPanel.add(doctorCreateAppointmentPanel);
 
-        tempRowPanel = new JPanel(new FlowLayout());
-        tempRowPanel.add(new JLabel("Пациент для приёма"));
+        JPanel patientCreateAppointmentPanel = new JPanel(new FlowLayout());
+        patientCreateAppointmentPanel.add(new JLabel("Пациент для приёма"));
         patientLoginForAppointmentField.setEditable(false);
-        tempRowPanel.add(patientLoginForAppointmentField);
-        appointmentPanel.add(tempRowPanel);
+        patientCreateAppointmentPanel.add(patientLoginForAppointmentField);
+        createAppointmentPanel.add(patientCreateAppointmentPanel);
 
-        tempRowPanel = new JPanel(new FlowLayout());
+        JPanel createAppointmentButtonPanel = new JPanel(new FlowLayout());
         JButton makeAndAppointmentBtn = new JButton("Назначить приём");
-        tempRowPanel.add(makeAndAppointmentBtn);
-        appointmentPanel.add(tempRowPanel);
+        createAppointmentButtonPanel.add(makeAndAppointmentBtn);
+        createAppointmentPanel.add(createAppointmentButtonPanel);
         makeAndAppointmentBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -339,17 +328,13 @@ public class UserFrame extends JFrame {
                 }
             }
         });
-        eastPanel.add(appointmentPanel);
+        eastPanel.add(createAppointmentPanel);
 
         return eastPanel;
     }
 
     public java.util.List<String> getPossibleDepartmentNames() {
         return clinicDepartmentsTableModel.getPossibleDepartmentNames();
-    }
-
-    public void setReadOnlyMode(boolean isReadOnlyMode) {
-        this.isReadOnlyMode = isReadOnlyMode;
     }
 
 }

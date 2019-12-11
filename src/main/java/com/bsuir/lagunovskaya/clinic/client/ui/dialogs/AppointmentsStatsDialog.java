@@ -54,7 +54,7 @@ public class AppointmentsStatsDialog extends JDialog {
         add(northPanel, BorderLayout.NORTH);
 
         barChartDataModel = new DefaultCategoryDataset();
-        JFreeChart barChart = ChartFactory.createBarChart("Статистика приёмов по датам", "Время", "Количество приёмов",
+        JFreeChart barChart = ChartFactory.createBarChart("Статистика приёмов по датам", "Дата", "Количество приёмов",
                 barChartDataModel, PlotOrientation.VERTICAL, true, true, false);
         barChartPanel = new ChartPanel( barChart );
         barChartPanel.setPreferredSize(new java.awt.Dimension( 560 , 367 ) );
