@@ -65,7 +65,7 @@ public class LoginFrame extends JFrame {
                     UserFrame userFrame = new UserFrame(LoginFrame.this, user);
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "Cannot login. Please check login and password");
+                    JOptionPane.showMessageDialog(null, "Вход не был выполнен. Пожалуйста, проверьте введенные логин и пароль");
                 }
             }
         });
