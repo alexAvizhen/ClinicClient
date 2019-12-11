@@ -2,6 +2,7 @@ package com.bsuir.lagunovskaya.clinic.client.ui.frames;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.AppointmentDialog;
+import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.AppointmentsStatsDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DepartmentDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DoctorDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.MyAppointmentsDialog;
@@ -16,6 +17,12 @@ import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;
 import com.bsuir.lagunovskaya.clinic.communication.entity.User;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +65,7 @@ public class UserFrame extends JFrame {
             isReadOnlyMode = true;
         }
         setTitle("Doctor Clinic Application Client"); //название окна
-        setSize(new Dimension(1000, 600)); //устанавливаем размер окна
+        setSize(new Dimension(1200, 600)); //устанавливаем размер окна
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); //выход из приложения при нажатии  на крестит в окне
         setLocationRelativeTo(null);
         addListenerOnCloseDoctorFrame();
@@ -229,10 +236,12 @@ public class UserFrame extends JFrame {
     }
 
     private JPanel buildEastPanel() {
-        JPanel eastPanel = new JPanel(new GridLayout(5, 1));
-        JPanel tempRowPanel = new JPanel(new FlowLayout());
+        JPanel eastPanel = new JPanel(new GridLayout(3, 1));
+        JPanel tempRowPanel = new JPanel(new GridLayout(3, 1));
+        JPanel tempCellPanel = new JPanel(new FlowLayout());
         JButton createDepartment = new JButton("Создать отделение");
-        tempRowPanel.add(createDepartment);
+        tempCellPanel.add(createDepartment);
+        tempRowPanel.add(tempCellPanel);
         final Doctor activeDoctor;
         if (activeUser.isAdmin()) {
             activeDoctor = ((Doctor) activeUser);
@@ -248,9 +257,11 @@ public class UserFrame extends JFrame {
         });
         eastPanel.add(tempRowPanel);
 
-        tempRowPanel = new JPanel(new FlowLayout());
+//        tempRowPanel = new JPanel(new FlowLayout());
+        tempCellPanel = new JPanel(new FlowLayout());
         JButton createDoctor = new JButton("Создать врача");
-        tempRowPanel.add(createDoctor);
+        tempCellPanel.add(createDoctor);
+        tempRowPanel.add(tempCellPanel);
         createDoctor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -259,9 +270,11 @@ public class UserFrame extends JFrame {
         });
         eastPanel.add(tempRowPanel);
 
-        tempRowPanel = new JPanel(new FlowLayout());
+//        tempRowPanel = new JPanel(new FlowLayout());
+        tempCellPanel = new JPanel(new FlowLayout());
         JButton createPatient = new JButton("Создать пациента");
-        tempRowPanel.add(createPatient);
+        tempCellPanel.add(createPatient);
+        tempRowPanel.add(tempCellPanel);
         createPatient.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -270,13 +283,28 @@ public class UserFrame extends JFrame {
         });
         eastPanel.add(tempRowPanel);
 
-        tempRowPanel = new JPanel(new FlowLayout());
+        tempRowPanel = new JPanel(new GridLayout(2, 1));
+        tempCellPanel = new JPanel(new FlowLayout());
         JButton showMyAppointments = new JButton("Показать мои приёмы");
-        tempRowPanel.add(showMyAppointments);
+        tempCellPanel.add(showMyAppointments);
+        tempRowPanel.add(tempCellPanel);
         showMyAppointments.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new MyAppointmentsDialog(UserFrame.this, activeUser);
+            }
+        });
+        eastPanel.add(tempRowPanel);
+
+//        tempRowPanel = new JPanel(new FlowLayout());
+        tempCellPanel = new JPanel(new FlowLayout());
+        JButton showAppointmentsStatsBtn = new JButton("Показать статистику приёмов");
+        tempCellPanel.add(showAppointmentsStatsBtn);
+        tempRowPanel.add(tempCellPanel);
+        showAppointmentsStatsBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AppointmentsStatsDialog(UserFrame.this);
             }
         });
         eastPanel.add(tempRowPanel);
