@@ -1,6 +1,7 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
+import com.bsuir.lagunovskaya.clinic.client.service.ClinicClientOperations;
 import com.bsuir.lagunovskaya.clinic.client.ui.frames.UserFrame;
 import com.bsuir.lagunovskaya.clinic.communication.command.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.response.ClinicDepartmentServerResponse;
@@ -100,17 +101,17 @@ public class PatientDialog extends JDialog {
                 ClinicDepartment selectedClinicDepartment = clinicDepartmentServerResponse.getClinicDepartment();
                 Patient patientToUpdateOrCreate;
                 if (patient == null) {
-                    patientToUpdateOrCreate = new Patient(loginField.getText(), passwordField.getText(), selectedClinicDepartment);
+                    patientToUpdateOrCreate = new Patient(loginField.getText(), passwordField.getText(), selectedClinicDepartment.getId());
                 } else {
                     patientToUpdateOrCreate = patient;
                     patientToUpdateOrCreate.setLogin(loginField.getText());
                     patientToUpdateOrCreate.setPassword(passwordField.getText());
-                    patientToUpdateOrCreate.setClinicDepartment(selectedClinicDepartment);
+                    patientToUpdateOrCreate.setClinicDepartmentId(selectedClinicDepartment.getId());
                 }
                 patientToUpdateOrCreate.setSurname(surnameField.getText());
                 patientToUpdateOrCreate.setName(nameField.getText());
                 patientToUpdateOrCreate.setBirthDate((Date) birthDateSpinner.getValue());
-                patientToUpdateOrCreate.setPhoneNumber(passwordField.getText());
+                patientToUpdateOrCreate.setPhoneNumber(phoneNumberField.getText());
                 patientToUpdateOrCreate.setAddress(addressField.getText());
 
                 CreateOrUpdatePatientClientCommand createOrUpdatePatientCommand =
@@ -146,7 +147,8 @@ public class PatientDialog extends JDialog {
         if (patient != null) {
             loginField.setText(patient.getLogin());
             passwordField.setText(patient.getPassword());
-            departmentsComboBox.setSelectedItem(patient.getClinicDepartment().getName());
+            ClinicDepartment clinicDepartmentById = ClinicClientOperations.getClinicDepartmentById(patient.getClinicDepartmentId());
+            departmentsComboBox.setSelectedItem(clinicDepartmentById.getName());
             surnameField.setText(patient.getSurname());
             nameField.setText(patient.getName());
             phoneNumberField.setText(patient.getPhoneNumber());

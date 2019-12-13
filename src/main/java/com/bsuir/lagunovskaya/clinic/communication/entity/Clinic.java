@@ -9,13 +9,13 @@ public class Clinic implements Serializable {
     private Integer id;
     private String address;
     private String description;
-    private List<ClinicDepartment> clinicDepartments;
+    private List<Integer> clinicDepartmentIds;
 
     public Clinic(String address, String description) {
         this.id = null;
         this.address = address;
         this.description = description;
-        this.clinicDepartments = new ArrayList<>();
+        this.clinicDepartmentIds = new ArrayList<>();
     }
 
     public void setId(Integer id) {
@@ -30,8 +30,12 @@ public class Clinic implements Serializable {
         this.description = description;
     }
 
-    public void setClinicDepartments(List<ClinicDepartment> clinicDepartments) {
-        this.clinicDepartments = clinicDepartments;
+    public List<Integer> getClinicDepartmentIds() {
+        return clinicDepartmentIds;
+    }
+
+    public void setClinicDepartmentIds(List<Integer> clinicDepartmentIds) {
+        this.clinicDepartmentIds = clinicDepartmentIds;
     }
 
     public Integer getId() {
@@ -46,9 +50,6 @@ public class Clinic implements Serializable {
         return description;
     }
 
-    public List<ClinicDepartment> getClinicDepartments() {
-        return clinicDepartments;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -60,6 +61,6 @@ public class Clinic implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getAddress(), getDescription(), getClinicDepartments());
+        return Objects.hash(getId(), getAddress(), getDescription(), getClinicDepartmentIds());
     }
 }

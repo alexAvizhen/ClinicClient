@@ -8,20 +8,20 @@ import java.util.Objects;
 public class ClinicDepartment implements Serializable {
 
     private Integer id;
-    private Clinic clinic;
+    private Integer clinicId;
     private String name;
     private List<String> streets;
 
-    private List<Patient> patients;
-    private List<Doctor> doctors;
+    private List<Integer> patientIds;
+    private List<Integer> doctorIds;
 
-    public ClinicDepartment(Clinic clinic, String name, List<String> streets) {
+    public ClinicDepartment(Integer clinicId, String name, List<String> streets) {
         this.id = null;
-        this.clinic = clinic;
+        this.clinicId = clinicId;
         this.name = name;
         this.streets = streets;
-        this.patients = new ArrayList<>();
-        this.doctors = new ArrayList<>();
+        this.patientIds = new ArrayList<>();
+        this.doctorIds = new ArrayList<>();
     }
 
     public Integer getId() {
@@ -32,12 +32,12 @@ public class ClinicDepartment implements Serializable {
         this.id = id;
     }
 
-    public Clinic getClinic() {
-        return clinic;
+    public Integer getClinicId() {
+        return clinicId;
     }
 
-    public void setClinic(Clinic clinic) {
-        this.clinic = clinic;
+    public void setClinicId(Integer clinicId) {
+        this.clinicId = clinicId;
     }
 
     public String getName() {
@@ -48,14 +48,6 @@ public class ClinicDepartment implements Serializable {
         return streets;
     }
 
-    public List<Patient> getPatients() {
-        return patients;
-    }
-
-    public List<Doctor> getDoctors() {
-        return doctors;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -64,12 +56,20 @@ public class ClinicDepartment implements Serializable {
         this.streets = streets;
     }
 
-    public void setPatients(List<Patient> patients) {
-        this.patients = patients;
+    public List<Integer> getPatientIds() {
+        return patientIds;
     }
 
-    public void setDoctors(List<Doctor> doctors) {
-        this.doctors = doctors;
+    public void setPatientIds(List<Integer> patientIds) {
+        this.patientIds = patientIds;
+    }
+
+    public List<Integer> getDoctorIds() {
+        return doctorIds;
+    }
+
+    public void setDoctorIds(List<Integer> doctorIds) {
+        this.doctorIds = doctorIds;
     }
 
     @Override
@@ -82,6 +82,6 @@ public class ClinicDepartment implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getClinic(), getName(), getStreets(), getPatients(), getDoctors());
+        return Objects.hash(getId(), getClinicId(), getName(), getStreets(), getPatientIds(), getDoctorIds());
     }
 }

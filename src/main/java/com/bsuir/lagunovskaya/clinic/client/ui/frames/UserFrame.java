@@ -1,6 +1,7 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.frames;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
+import com.bsuir.lagunovskaya.clinic.client.service.ClinicClientOperations;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.AppointmentDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.AppointmentsStatsDialog;
 import com.bsuir.lagunovskaya.clinic.client.ui.dialogs.DepartmentDialog;
@@ -12,6 +13,7 @@ import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.DoctorsTableModel;
 import com.bsuir.lagunovskaya.clinic.client.ui.tables.models.PatientTableModel;
 import com.bsuir.lagunovskaya.clinic.client.utils.StringUtils;
 import com.bsuir.lagunovskaya.clinic.communication.command.ClientCommand;
+import com.bsuir.lagunovskaya.clinic.communication.entity.Clinic;
 import com.bsuir.lagunovskaya.clinic.communication.entity.ClinicDepartment;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;
@@ -161,7 +163,8 @@ public class UserFrame extends JFrame {
                     fillDoctorsAndPatientsTablesForDepartment(clinicDepartment);
                 } else {
                     if (activeUser.isAdmin()) {
-                        new DepartmentDialog(UserFrame.this, clinicDepartment.getClinic(), clinicDepartment, activeUser.isAdmin());
+                        Clinic clinic = ClinicClientOperations.getClinicById(clinicDepartment.getClinicId());
+                        new DepartmentDialog(UserFrame.this, clinic, clinicDepartment, activeUser.isAdmin());
                     }
                 }
 
@@ -173,10 +176,12 @@ public class UserFrame extends JFrame {
         doctorsTableModel.clearDoctors();
         patientsTableModel.clearPatients();
         if (clinicDepartment != null) {
-            for (Doctor departmentDoctor : clinicDepartment.getDoctors()) {
+            for (Integer departmentDoctorId : clinicDepartment.getDoctorIds()) {
+                Doctor departmentDoctor = ClinicClientOperations.getDoctorById(departmentDoctorId);
                 doctorsTableModel.addDoctor(departmentDoctor);
             }
-            for (Patient departmentPatient : clinicDepartment.getPatients()) {
+            for (Integer departmentPatientId : clinicDepartment.getPatientIds()) {
+                Patient departmentPatient = ClinicClientOperations.getPatientById(departmentPatientId);
                 patientsTableModel.addPatient(departmentPatient);
             }
         }
@@ -190,14 +195,19 @@ public class UserFrame extends JFrame {
         JLabel activeUserInfoLabel = new JLabel();
         if (activeUser.isAdmin()) {
             Doctor activeDoctor = (Doctor) this.activeUser;
-            setTitle("Приложение поликлинники " + activeDoctor.getClinicDepartment().getClinic().getDescription());
+            ClinicDepartment activeUserDepartment = ClinicClientOperations.getClinicDepartmentById(activeDoctor.getClinicDepartmentId());
+            Clinic activeUserClinic = ClinicClientOperations.getClinicById(activeUserDepartment.getId());
+            setTitle("Приложение поликлинники " + activeUserClinic.getDescription());
             activeUserInfoLabel.setText("Уважаемый врач, Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
-                    ", Ваше отделение: " + activeDoctor.getClinicDepartment().getName());
+                    ", Ваше отделение: " + activeUserDepartment.getName());
         } else {
             Patient activePatient = (Patient) this.activeUser;
-            setTitle("Приложение поликлинники " + activePatient.getClinicDepartment().getClinic().getDescription());
+            ClinicDepartment activeUserDepartment = ClinicClientOperations.getClinicDepartmentById(activePatient.getClinicDepartmentId());
+            Clinic activeUserClinic = ClinicClientOperations.getClinicById(activeUserDepartment.getClinicId());
+            setTitle("Приложение поликлинники " + activeUserClinic.getDescription());
+            setTitle("Приложение поликлинники " + activeUserClinic.getDescription());
             activeUserInfoLabel.setText("Уважаемый пациент, Добро пожаловать, Ваш Логин: " + activeUser.getLogin() +
-                    ", Ваше отделение: " + activePatient.getClinicDepartment().getName());
+                    ", Ваше отделение: " + activeUserDepartment.getName());
         }
         northPanel.add(activeUserInfoLabel);
 
@@ -245,7 +255,9 @@ public class UserFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Doctor activeDoctor = ((Doctor) activeUser);
-                new DepartmentDialog(UserFrame.this, activeDoctor.getClinicDepartment().getClinic(), null, activeUser.isAdmin());
+                ClinicDepartment activeDoctorDepartment = ClinicClientOperations.getClinicDepartmentById(activeDoctor.getClinicDepartmentId());
+                Clinic activeDoctorClinic = ClinicClientOperations.getClinicById(activeDoctorDepartment.getId());
+                new DepartmentDialog(UserFrame.this, activeDoctorClinic, null, activeUser.isAdmin());
             }
         });
 

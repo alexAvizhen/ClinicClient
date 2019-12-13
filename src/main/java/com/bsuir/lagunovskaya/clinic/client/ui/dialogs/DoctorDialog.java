@@ -1,6 +1,7 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.dialogs;
 
 import com.bsuir.lagunovskaya.clinic.client.service.ClientCommandSender;
+import com.bsuir.lagunovskaya.clinic.client.service.ClinicClientOperations;
 import com.bsuir.lagunovskaya.clinic.client.ui.frames.UserFrame;
 import com.bsuir.lagunovskaya.clinic.communication.command.ClientCommand;
 import com.bsuir.lagunovskaya.clinic.communication.response.ClinicDepartmentServerResponse;
@@ -96,12 +97,12 @@ public class DoctorDialog extends JDialog {
                 ClinicDepartment selectedClinicDepartment = clinicDepartmentServerResponse.getClinicDepartment();
                 Doctor doctorToUpdateOrCreate;
                 if (doctor == null) {
-                    doctorToUpdateOrCreate = new Doctor(loginField.getText(), passwordField.getText(), selectedClinicDepartment);
+                    doctorToUpdateOrCreate = new Doctor(loginField.getText(), passwordField.getText(), selectedClinicDepartment.getId());
                 } else {
                     doctorToUpdateOrCreate = doctor;
                     doctorToUpdateOrCreate.setLogin(loginField.getText());
                     doctorToUpdateOrCreate.setPassword(passwordField.getText());
-                    doctorToUpdateOrCreate.setClinicDepartment(selectedClinicDepartment);
+                    doctorToUpdateOrCreate.setClinicDepartmentId(selectedClinicDepartment.getId());
                 }
                 doctorToUpdateOrCreate.setSurname(surnameField.getText());
                 doctorToUpdateOrCreate.setName(nameField.getText());
@@ -142,7 +143,8 @@ public class DoctorDialog extends JDialog {
         if (doctor != null) {
             loginField.setText(doctor.getLogin());
             passwordField.setText(doctor.getPassword());
-            departmentsComboBox.setSelectedItem(doctor.getClinicDepartment().getName());
+            ClinicDepartment clinicDepartmentById = ClinicClientOperations.getClinicDepartmentById(doctor.getClinicDepartmentId());
+            departmentsComboBox.setSelectedItem(clinicDepartmentById.getName());
             surnameField.setText(doctor.getSurname());
             nameField.setText(doctor.getName());
             phoneNumberField.setText(doctor.getPhoneNumber());

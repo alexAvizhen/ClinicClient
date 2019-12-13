@@ -53,8 +53,8 @@ public class DepartmentDialog extends JDialog {
 
         if (clinicDepartment != null) {
             tempRowPanel = new JPanel(new FlowLayout());
-            tempRowPanel.add(new JLabel("Врачей в отделении: " + clinicDepartment.getDoctors().size()));
-            tempRowPanel.add(new JLabel("Пациентов в отделении: " + clinicDepartment.getPatients().size()));
+            tempRowPanel.add(new JLabel("Врачей в отделении: " + clinicDepartment.getDoctorIds().size()));
+            tempRowPanel.add(new JLabel("Пациентов в отделении: " + clinicDepartment.getPatientIds().size()));
             departmentDialogMainPanel.add(tempRowPanel);
 
         }
@@ -100,7 +100,7 @@ public class DepartmentDialog extends JDialog {
                 }
                 ClinicDepartment clinicDepartmentToUpdateOrCreate;
                 if (clinicDepartment == null) {
-                    clinicDepartmentToUpdateOrCreate = new ClinicDepartment(clinic, departmentNameField.getText(), streets);
+                    clinicDepartmentToUpdateOrCreate = new ClinicDepartment(clinic.getId(), departmentNameField.getText(), streets);
                 } else {
                     clinicDepartmentToUpdateOrCreate = clinicDepartment;
                     clinicDepartmentToUpdateOrCreate.setName(departmentNameField.getText());

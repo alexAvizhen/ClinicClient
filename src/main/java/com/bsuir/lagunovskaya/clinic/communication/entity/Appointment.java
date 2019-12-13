@@ -6,15 +6,15 @@ import java.util.Objects;
 
 public class Appointment implements Serializable {
     private Integer id;
-    private Doctor doctor;
-    private Patient patient;
+    private Integer doctorId;
+    private Integer patientId;
     private Date appointmentDate;
     private String commentToAppointment;
 
-    public Appointment(Doctor doctor, Patient patient, Date appointmentDate, String commentToAppointment) {
+    public Appointment(Integer doctorId, Integer patientId, Date appointmentDate, String commentToAppointment) {
         this.id = null;
-        this.doctor = doctor;
-        this.patient = patient;
+        this.doctorId = doctorId;
+        this.patientId = patientId;
         this.appointmentDate = appointmentDate;
         this.commentToAppointment = commentToAppointment;
     }
@@ -27,20 +27,20 @@ public class Appointment implements Serializable {
         this.id = id;
     }
 
-    public Doctor getDoctor() {
-        return doctor;
+    public Integer getDoctorId() {
+        return doctorId;
     }
 
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
     }
 
-    public Patient getPatient() {
-        return patient;
+    public Integer getPatientId() {
+        return patientId;
     }
 
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
     }
 
     public Date getAppointmentDate() {

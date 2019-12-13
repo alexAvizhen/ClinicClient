@@ -4,20 +4,20 @@ import java.util.Objects;
 
 public class Patient extends User {
 
-    private ClinicDepartment clinicDepartment;
+    private Integer clinicDepartmentId;
     private String address;
 
-    public Patient(String login, String password, ClinicDepartment clinicDepartment) {
+    public Patient(String login, String password, Integer clinicDepartmentId) {
         super(null, login, password);
-        this.clinicDepartment = clinicDepartment;
+        this.clinicDepartmentId = clinicDepartmentId;
     }
 
-    public ClinicDepartment getClinicDepartment() {
-        return clinicDepartment;
+    public Integer getClinicDepartmentId() {
+        return clinicDepartmentId;
     }
 
-    public void setClinicDepartment(ClinicDepartment clinicDepartment) {
-        this.clinicDepartment = clinicDepartment;
+    public void setClinicDepartmentId(Integer clinicDepartmentId) {
+        this.clinicDepartmentId = clinicDepartmentId;
     }
 
     public String getAddress() {
@@ -37,6 +37,6 @@ public class Patient extends User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getClinicDepartment(), getAddress());
+        return Objects.hash(super.hashCode(), getClinicDepartmentId(), getAddress());
     }
 }

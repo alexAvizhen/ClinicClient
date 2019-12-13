@@ -1,6 +1,9 @@
 package com.bsuir.lagunovskaya.clinic.client.ui.tables.models;
 
+import com.bsuir.lagunovskaya.clinic.client.service.ClinicClientOperations;
 import com.bsuir.lagunovskaya.clinic.communication.entity.Appointment;
+import com.bsuir.lagunovskaya.clinic.communication.entity.Doctor;
+import com.bsuir.lagunovskaya.clinic.communication.entity.Patient;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -30,18 +33,20 @@ public class AppointmentsTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Appointment appointment = appointments.get(rowIndex);
+        Doctor doctor = ClinicClientOperations.getDoctorById(appointment.getDoctorId());
+        Patient patient = ClinicClientOperations.getPatientById(appointment.getPatientId());
         if (columnIndex == 0) {
-            return appointment.getDoctor().getSurname();
+            return doctor.getSurname();
         } else if (columnIndex == 1) {
-            return appointment.getDoctor().getName();
+            return doctor.getName();
         } else if (columnIndex == 2) {
-            return appointment.getDoctor().getPhoneNumber();
+            return doctor.getPhoneNumber();
         } else if (columnIndex == 3) {
-            return appointment.getPatient().getSurname();
+            return patient.getSurname();
         } else if (columnIndex == 4) {
-            return appointment.getPatient().getName();
+            return patient.getName();
         } else if (columnIndex == 5) {
-            return appointment.getPatient().getPhoneNumber();
+            return patient.getPhoneNumber();
         } else if (columnIndex == 6) {
             return appointment.getAppointmentDate();
         } else if (columnIndex == 7) {
